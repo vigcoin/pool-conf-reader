@@ -1,28 +1,20 @@
-import * as fs from "fs";
-import * as path from "path";
+import * as fs from 'fs';
+import * as path from 'path';
 
 export class ConfigReader {
-  file: string
-  version = '1.0.0'
+  private file: any;
+  private version = '1.0.0';
   constructor(file: string = 'config.json') {
     this.setFile(file);
   }
 
-  private setFile(file: string) {
-    if (fs.existsSync(file)) {
-      this.file = file;
-    } else {
-      this.file = '';
-    }
-  }
-
   public get(donationAddresses: any = null) {
-    let config = this.read();
-    let donations = this.getDonations(config, donationAddresses);
+    const config = this.read();
+    const donations = this.getDonations(config, donationAddresses);
     return {
-      config: config,
-      donations: donations,
-      version: this.version
+      config,
+      donations,
+      version: this.version,
     };
   }
 
@@ -30,7 +22,7 @@ export class ConfigReader {
     if (!this.file) {
       return {};
     }
-    let json = String(fs.readFileSync(this.file));
+    const json = String(fs.readFileSync(this.file));
     try {
       return JSON.parse(json);
     } catch (e) {
@@ -38,29 +30,29 @@ export class ConfigReader {
     }
   }
 
-  private getDonations(config: any, donationAddresses:any) {
+  private setFile(file: string) {
+    fs.existsSync(file) ? (this.file = file) : (this.file = '');
+  }
+
+  private getDonations(config: any, donationAddresses: any) {
     if (!donationAddresses) {
       donationAddresses = {
-        devDonation: {
-        },
-        coreDevDonation: {
-        },
-        extraFeaturesDevDonation: {
-        }
+        coreDevDonation: {},
+        devDonation: {},
+        extraFeaturesDevDonation: {},
       };
     }
-    let donations: any = {};
-    for (let configOption of Object.keys(donationAddresses)) {
+    const donations: any = {};
+    for (const configOption of Object.keys(donationAddresses)) {
       if (!config.blockUnlocker) {
         continue;
       }
-      let percent = config.blockUnlocker[configOption];
-      let wallet = donationAddresses[configOption][config.symbol];
-      if (percent && wallet) {
-        donations[wallet] = percent;
+      const percent = config.blockUnlocker[configOption];
+      const walconst = donationAddresses[configOption][config.symbol];
+      if (percent && walconst) {
+        donations[walconst] = percent;
       }
     }
     return donations;
   }
 }
-
